@@ -111,13 +111,13 @@ class Snake{
         void destroy();
 };
 
-void Snake::left() {
+void Snake::right() {
     int t = directionX;
     directionX = -directionY;
     directionY = t;
 }
 
-void Snake::right() {
+void Snake::left() {
     int t = directionX;
     directionX = directionY;
     directionY = -t;
