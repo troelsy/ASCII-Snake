@@ -11,8 +11,6 @@
 #include <iostream>
 using namespace std;
 
-// 🐭🐹🐰🐥🐌🐝🐞🐛🐙🐳
-
 void clearScreen(){
     cout << "\033[2J";
 }
@@ -158,6 +156,7 @@ void Snake::tick(){
     for(SnakeLink* link : snakelinks){
         link->tick();
     }
+
     // Spawn new link
     spawnLink(x, y);
 
@@ -168,10 +167,49 @@ void Snake::tick(){
 void Snake::destroy(){
 }
 
+
+class PreySpawner{
+    int x;
+    int y;
+
+    public:
+        static const constexpr char* const prey[] = {"🐭","🐹","🐷","🐢","🐬","🐙"};
+        void init();
+        void spawn();
+        void draw();
+        void tick();
+};
+
+void PreySpawner::init(){
+    //x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
+    //y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
+}
+
+void PreySpawner::spawn(){
+    x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
+    y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
+    cout << x << "; " << y << endl;
+}
+
+void PreySpawner::tick(){
+}
+
+void PreySpawner::draw(){
+    setChar(y,x,"+");
+}
+
+
+
 int main(){
-    clearScreen();
-    resetCursor();
-    drawFrame();
+    srand (time(NULL)); // Set random seed
+    //clearScreen();
+    //resetCursor();
+    //drawFrame();
+
+    PreySpawner preyspawner;
+    preyspawner.init();
+    preyspawner.spawn();
+
 
     Snake snake;
     snake.spawn();
@@ -186,6 +224,9 @@ int main(){
         resetCursor();
         drawFrame();
 
+        preyspawner.tick();
+        preyspawner.draw();
+
         snake.tick();
         snake.draw();
         usleep(200000); // 200 ms
@@ -196,8 +237,6 @@ int main(){
 
         i++;
     }
-
-
 
 
     moveCursor(25,1);
