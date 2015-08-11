@@ -59,6 +59,12 @@ class SnakeLink{
         bool dead();
 };
 
+SnakeLink::SnakeLink (int newx, int newy, int frames){
+    x = newx;
+    y = newy;
+    framesLeft = frames;
+}
+
 void SnakeLink::setPos(int newx, int newy){
     x = newx;
     y = newy;
@@ -84,12 +90,9 @@ class Snake{
     int directionX;
     int directionY;
 
+    vector<SnakeLink*> snakelinks;
+
     SnakeLink* a = new SnakeLink;
-    SnakeLink* b = new SnakeLink;
-    SnakeLink* c = new SnakeLink;
-    SnakeLink* d = new SnakeLink;
-    SnakeLink* e = new SnakeLink;
-    SnakeLink* f = new SnakeLink;
 
     public:
         void tick();
@@ -115,6 +118,10 @@ void Snake::spawn(){
     y = 30;
 
     a->setPos(x,y);
+
+    snakelinks.push_back(new SnakeLink(12,30,4));
+    //snakelinks.pushback();
+
 
     //usleep(200000); // 200 ms
 
