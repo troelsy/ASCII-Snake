@@ -172,21 +172,23 @@ class PreySpawner{
     int x;
     int y;
 
+    Snake* snakePointer;
+
     public:
         static const constexpr char* const prey[] = {"🐭","🐹","🐷","🐢","🐬","🐙"};
-        void init();
+        void init(Snake* snakeP);
         void spawn();
         void draw();
         void tick();
 };
 
-void PreySpawner::init(){
+void PreySpawner::init(Snake* snakeP){
+    snakePointer = snakeP;
 }
 
 void PreySpawner::spawn(){
     x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
     y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
-    cout << x << "; " << y << endl;
 }
 
 void PreySpawner::tick(){
@@ -197,21 +199,17 @@ void PreySpawner::draw(){
 }
 
 
-
 int main(){
     srand (time(NULL)); // Set random seed
-
-    PreySpawner preyspawner;
-    preyspawner.init();
-    preyspawner.spawn();
-
 
     Snake snake;
     snake.spawn();
     snake.draw();
 
+    PreySpawner preyspawner;
+    preyspawner.init(&snake);
+    preyspawner.spawn();
 
-    // Draw square
     int stop = 0;
     int i = 0;
     while (stop != 1){
@@ -224,13 +222,13 @@ int main(){
 
         snake.tick();
         snake.draw();
-        usleep(200000); // 200 ms
 
         if (i % 10 == 0){
-            snake.left();
+            snake.right();
         }
 
         i++;
+        usleep(200000); // 200 ms
     }
 
 
