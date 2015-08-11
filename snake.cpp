@@ -50,11 +50,12 @@ void flushBuffer(){
 }
 
 class SnakeLink{
-    int x;
-    int y;
     int framesLeft;
 
     public:
+        int x;
+        int y;
+
         SnakeLink(int newx, int newy, int frames);
         void draw();
         void setPos(int newx, int newy);
@@ -109,6 +110,7 @@ class Snake{
         void right();
         void spawn();
         void destroy();
+        bool collision(int x, int y);
 };
 
 void Snake::right() {
@@ -167,6 +169,14 @@ void Snake::tick(){
 void Snake::destroy(){
 }
 
+bool Snake::collision(int x, int y){
+    for(SnakeLink* link : snakelinks){
+        if (link->x == x && link->y == y){
+            return true;
+        }
+    }
+    return false;
+}
 
 class PreySpawner{
     int x;
@@ -189,6 +199,11 @@ void PreySpawner::init(Snake* snakeP){
 void PreySpawner::spawn(){
     x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
     y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
+
+    while (snakePointer->collision(x, y)){
+        x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
+        y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
+    }
 }
 
 void PreySpawner::tick(){
