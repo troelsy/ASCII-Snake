@@ -2,6 +2,7 @@
 #define WIDTH 80
 #define HOFFSET 10
 #define VOFFSET 1
+#define SNAKELENGTH 8
 
 #include <vector>
 #include <unistd.h>
@@ -22,20 +23,20 @@ void resetCursor(){
 }
 
 void drawFrame(){
-    moveCursor(1,1);
+    resetCursor();
 
     // Left and right side
     for (int i = 1; i < HEIGHT+1; i++){
-        cout << "##########";
+        cout << "🌑 🌑 🌑 🌑 🌑";
         moveCursor(i,WIDTH-HOFFSET);
-        cout << "##########";
+        cout << "🌑 🌑 🌑 🌑 🌑  ";
     }
 
     // Top and bottom
     moveCursor(1,HOFFSET);
-    cout << "############################################################";
+    cout << " 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 ";
     moveCursor(HEIGHT,HOFFSET);
-    cout << "############################################################";
+    cout << " 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 ";
 }
 
 void setChar(int row, int column, char c){
@@ -118,7 +119,7 @@ void Snake::right() {
 }
 
 void Snake::spawnLink(int x, int y){
-    snakelinks.push_back(new SnakeLink(x,y,4));
+    snakelinks.push_back(new SnakeLink(x, y, SNAKELENGTH));
 }
 
 void Snake::spawn(){
@@ -138,11 +139,23 @@ void Snake::draw(){
     flushBuffer();
 }
 
+bool cleanup(SnakeLink* l){
+    return l->dead();
+}
+
 void Snake::tick(){
     x = x + directionX;
     y = y + directionY;
 
+    // Decrease life of old links
+    for(SnakeLink* link : snakelinks){
+        link->tick();
+    }
+    // Spawn new link
     spawnLink(x, y);
+
+    // Clean up in links, by removing dead ones
+    snakelinks.erase(remove_if(snakelinks.begin(), snakelinks.end(), cleanup), snakelinks.end());
 }
 
 void Snake::destroy(){
@@ -159,16 +172,22 @@ int main(){
 
 
     // Draw square
-    int i = 40;
-    while (i > 0)
-    {
-        if (i % 10 == 0){
-            snake.left();
-        }
+    int stop = 0;
+    int i = 0;
+    while (stop != 1){
+        clearScreen();
+        resetCursor();
+        drawFrame();
+
         snake.tick();
         snake.draw();
         usleep(200000); // 200 ms
-        i--;
+
+        if (i % 10 == 0){
+            snake.left();
+        }
+
+        i++;
     }
 
 
