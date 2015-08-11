@@ -1,3 +1,5 @@
+//g++ snake.cpp -std=c++11 -o snake && ./snake
+
 #define HEIGHT 24
 #define WIDTH 80
 #define HOFFSET 10
@@ -9,6 +11,7 @@
 #include <iostream>
 using namespace std;
 
+// 🐭🐹🐰🐥🐌🐝🐞🐛🐙🐳
 
 void clearScreen(){
     cout << "\033[2J";
@@ -39,7 +42,7 @@ void drawFrame(){
     cout << " 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 🌑 ";
 }
 
-void setChar(int row, int column, char c){
+void setChar(int row, int column, string c){
     moveCursor(row+VOFFSET, column+HOFFSET);
     cout << c;
 }
@@ -73,7 +76,11 @@ void SnakeLink::setPos(int newx, int newy){
 }
 
 void SnakeLink::draw(){
-    setChar(y,x,'+');
+    if (framesLeft == SNAKELENGTH){
+        setChar(y,x,"🐸");
+    } else {
+        setChar(y,x,"❎");
+    }
 }
 
 void SnakeLink::tick(){
