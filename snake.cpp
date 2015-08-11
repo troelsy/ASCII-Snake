@@ -53,6 +53,7 @@ class SnakeLink{
     int framesLeft;
 
     public:
+        SnakeLink(int newx, int newy, int frames);
         void draw();
         void setPos(int newx, int newy);
         void tick();
@@ -71,7 +72,7 @@ void SnakeLink::setPos(int newx, int newy){
 }
 
 void SnakeLink::draw(){
-    setChar(x,y,'+');
+    setChar(y,x,'+');
 }
 
 void SnakeLink::tick(){
@@ -92,7 +93,8 @@ class Snake{
 
     vector<SnakeLink*> snakelinks;
 
-    SnakeLink* a = new SnakeLink;
+    private:
+        void spawnLink(int x, int y);
 
     public:
         void tick();
@@ -104,31 +106,34 @@ class Snake{
 };
 
 void Snake::left() {
+    int t = directionX;
     directionX = -directionY;
-    directionY = directionX;
+    directionY = t;
 }
 
 void Snake::right() {
+    int t = directionX;
     directionX = directionY;
-    directionY = -directionX;
+    directionY = -t;
+}
+
+void Snake::spawnLink(int x, int y){
+    snakelinks.push_back(new SnakeLink(x,y,4));
 }
 
 void Snake::spawn(){
-    x = 12;
-    y = 30;
+    x = 30;
+    y = 12;
+    directionX = 1;
+    directionY = 0;
 
-    a->setPos(x,y);
-
-    snakelinks.push_back(new SnakeLink(12,30,4));
-    //snakelinks.pushback();
-
-
-    //usleep(200000); // 200 ms
-
+    spawnLink(x, y);
 }
 
 void Snake::draw(){
-    a->draw();
+    for(SnakeLink* link : snakelinks){
+        link->draw();
+    }
 
     flushBuffer();
 }
@@ -136,6 +141,8 @@ void Snake::draw(){
 void Snake::tick(){
     x = x + directionX;
     y = y + directionY;
+
+    spawnLink(x, y);
 }
 
 void Snake::destroy(){
@@ -151,14 +158,21 @@ int main(){
     snake.draw();
 
 
-    int i = 10;
+    // Draw square
+    int i = 40;
     while (i > 0)
     {
+        if (i % 10 == 0){
+            snake.left();
+        }
         snake.tick();
         snake.draw();
         usleep(200000); // 200 ms
         i--;
     }
+
+
+
 
     moveCursor(25,1);
     return 0;
