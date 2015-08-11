@@ -181,8 +181,6 @@ class PreySpawner{
 };
 
 void PreySpawner::init(){
-    //x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
-    //y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
 }
 
 void PreySpawner::spawn(){
@@ -202,9 +200,6 @@ void PreySpawner::draw(){
 
 int main(){
     srand (time(NULL)); // Set random seed
-    //clearScreen();
-    //resetCursor();
-    //drawFrame();
 
     PreySpawner preyspawner;
     preyspawner.init();
