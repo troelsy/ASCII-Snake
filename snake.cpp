@@ -5,6 +5,7 @@
 #define HOFFSET 10
 #define VOFFSET 1
 #define SNAKELENGTH 8
+#define MAX_NUM_SPRITES 6
 
 #include <vector>
 #include <unistd.h>
@@ -181,11 +182,11 @@ bool Snake::collision(int x, int y){
 class PreySpawner{
     int x;
     int y;
+    int randomSprite;
 
     Snake* snakePointer;
 
     public:
-        static const constexpr char* const prey[] = {"🐭","🐹","🐷","🐢","🐬","🐙"};
         void init(Snake* snakeP);
         void spawn();
         void draw();
@@ -197,6 +198,8 @@ void PreySpawner::init(Snake* snakeP){
 }
 
 void PreySpawner::spawn(){
+    randomSprite = rand() % (MAX_NUM_SPRITES);
+
     x = rand() % (WIDTH - HOFFSET - HOFFSET) + 1;
     y = rand() % (HEIGHT - VOFFSET - VOFFSET) + 1;
 
@@ -210,7 +213,8 @@ void PreySpawner::tick(){
 }
 
 void PreySpawner::draw(){
-    setChar(y,x,"+");
+    string prey[MAX_NUM_SPRITES] = {"🐭","🐹","🐷","🐢","🐬","🐙"};
+    setChar(y,x,prey[randomSprite]);
 }
 
 
@@ -228,9 +232,9 @@ int main(){
     int stop = 0;
     int i = 0;
     while (stop != 1){
-        clearScreen();
+        clearScreen(); // Should only clear the game-area
         resetCursor();
-        drawFrame();
+        drawFrame(); // Should only be drawn once
 
         preyspawner.tick();
         preyspawner.draw();
