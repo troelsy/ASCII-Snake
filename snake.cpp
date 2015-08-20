@@ -12,6 +12,19 @@
 #include <iostream>
 using namespace std;
 
+
+// Forward declaration of classes
+class PreySpawner;
+class Snake;
+class SnakeLink;
+
+
+struct coordinate{
+    int x;
+    int y;
+};
+
+
 void clearScreen(){
     cout << "\033[2J";
 }
@@ -91,7 +104,6 @@ bool SnakeLink::dead(){
     return framesLeft <= 0;
 }
 
-
 class Snake{
     int length;
     int x;
@@ -99,12 +111,15 @@ class Snake{
     int directionX;
     int directionY;
 
+    PreySpawner* preyspawnerPointer;
+
     vector<SnakeLink*> snakelinks;
 
     private:
         void spawnLink(int x, int y);
 
     public:
+        void init(PreySpawner* preyspawnerP);
         void tick();
         void draw();
         void left();
@@ -113,6 +128,10 @@ class Snake{
         void destroy();
         bool collision(int x, int y);
 };
+
+void Snake::init(PreySpawner* preyspawnerP){
+    preyspawnerPointer = preyspawnerP;
+}
 
 void Snake::right() {
     int t = directionX;
@@ -152,9 +171,6 @@ bool cleanup(SnakeLink* l){
 }
 
 void Snake::tick(){
-    x = x + directionX;
-    y = y + directionY;
-
     // Decrease life of old links
     for(SnakeLink* link : snakelinks){
         link->tick();
@@ -165,6 +181,15 @@ void Snake::tick(){
 
     // Clean up in links, by removing dead ones
     snakelinks.erase(remove_if(snakelinks.begin(), snakelinks.end(), cleanup), snakelinks.end());
+
+    // Find prey
+    //coordinate tmpCoor = preyspawnerPointer->getPos();
+    //int prey_x = preyspawnerPointer->x;
+    //int prey_y = preyspawnerPointer->y;
+
+    // Move snake
+    x = x + directionX;
+    y = y + directionY;
 }
 
 void Snake::destroy(){
@@ -191,6 +216,7 @@ class PreySpawner{
         void spawn();
         void draw();
         void tick();
+        coordinate getPos();
 };
 
 void PreySpawner::init(Snake* snakeP){
@@ -217,23 +243,30 @@ void PreySpawner::draw(){
     setChar(y,x,prey[randomSprite]);
 }
 
+coordinate PreySpawner::getPos(){
+    coordinate coor;
+    coor.x = x;
+    coor.y = y;
+
+    return coor;
+}
+
 
 int main(){
     srand (time(NULL)); // Set random seed
 
     Snake snake;
+    PreySpawner preyspawner;
+
+    snake.init(&preyspawner);
     snake.spawn();
     snake.draw();
 
-    PreySpawner preyspawner;
     preyspawner.init(&snake);
     preyspawner.spawn();
 
-    int stop = 0;
-    int i = 0;
-    while (stop != 1){
+    while (true){
         clearScreen(); // Should only clear the game-area
-        resetCursor();
         drawFrame(); // Should only be drawn once
 
         preyspawner.tick();
@@ -242,11 +275,6 @@ int main(){
         snake.tick();
         snake.draw();
 
-        if (i % 10 == 0){
-            snake.right();
-        }
-
-        i++;
         usleep(200000); // 200 ms
     }
 
